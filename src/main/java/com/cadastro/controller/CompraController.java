@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -22,6 +22,7 @@ public class CompraController {
 
     @PostMapping
     public ResponseEntity<Compra> cadastrarCompra(@Valid @RequestBody Compra compra) throws Exception {
+        compra.setDataCompra(LocalDateTime.now());
         Compra compraSalva = compraService.salvarCompra(compra);
         return ResponseEntity.status(HttpStatus.CREATED).body(compraSalva);
     }
@@ -30,8 +31,8 @@ public class CompraController {
     public ResponseEntity<?> buscarCompras(
             @RequestParam(required = true) String cpf,
             @RequestParam(required = true) String nomeProduto,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim) throws Exception {
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime dataInicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime dataFim) throws Exception {
 
         if (nomeProduto != null && nomeProduto.trim().isEmpty()) {
             return ResponseEntity.badRequest().body("Nome do produto não pode ser vazio.");
@@ -43,8 +44,8 @@ public class CompraController {
 
     @GetMapping("/relatorio")
     public ResponseEntity<List<RelatorioCompraDTO>> gerarRelatorio(
-            @RequestParam(required = false) LocalDate dataInicio,
-            @RequestParam(required = false) LocalDate dataFim) {
+            @RequestParam(required = false) LocalDateTime dataInicio,
+            @RequestParam(required = false) LocalDateTime dataFim) {
         List<RelatorioCompraDTO> relatorio = compraService.gerarRelatorio(dataInicio, dataFim);
         return ResponseEntity.ok(relatorio);
     }

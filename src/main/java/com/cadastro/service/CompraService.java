@@ -1,13 +1,13 @@
 package com.cadastro.service;
 
 import com.cadastro.dto.RelatorioCompraDTO;
+import com.cadastro.entity.Compra;
 import com.cadastro.exception.BusinessException;
 import com.cadastro.repository.CompraRepository;
-import com.cadastro.entity.Compra;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,19 +25,24 @@ public class CompraService {
         return compraRepository.save(compra);
     }
 
-    public List<Compra> buscarCompras(String cpf, String nomeProduto, LocalDate dataInicio, LocalDate dataFim) throws Exception {
+    public List<Compra> buscarCompras(String cpf, String nomeProduto, LocalDateTime dataInicio, LocalDateTime dataFim) throws Exception {
+        dataInicio = (dataInicio == null) ? LocalDateTime.of(2000, 1, 1, 20, 01, 02) : dataInicio;
+        dataFim = (dataFim == null) ? LocalDateTime.now() : dataFim;
         cpf = formatarCpf(cpf);
+        validarNomeProduto(nomeProduto);
 
-        List<Compra> compras = compraRepository.findByCpfComprador(cpf);
+        List<Compra> compras = compraRepository.findByCpfCompradorAndNomeProdutoContainingIgnoreCaseAndDataCompraBetween(
+                cpf, nomeProduto != null ? nomeProduto : "", dataInicio, dataFim);
 
         if (compras.isEmpty()) {
             throw new Exception("Nenhuma compra encontrada para o CPF: " + cpf);
         }
-
-        return compras;
+        return compras.stream()
+                .distinct()
+                .collect(Collectors.toList());
     }
 
-    public List<RelatorioCompraDTO> gerarRelatorio(LocalDate dataInicio, LocalDate dataFim) {
+    public List<RelatorioCompraDTO> gerarRelatorio(LocalDateTime dataInicio, LocalDateTime dataFim) {
         List<Compra> compras = compraRepository.findByDataCompraBetween(dataInicio, dataFim);
         return compras.stream()
                 .collect(Collectors.groupingBy(Compra::getNomeProduto))
