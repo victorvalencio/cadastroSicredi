@@ -33,3 +33,34 @@ A API foi desenvolvida utilizando Spring Boot, e inclui funcionalidades como cad
 
 2. **Clonar o Repositório**:
    git clone https://github.com/victorvalencio/cadastroSicredi
+
+## Relacionamento entre `productId` e `productName`
+
+No sistema de cadastro de compras, cada productId está associado de forma única a um nome de produto (productName).
+Isso significa que um mesmo `productId` não pode ser utilizado para mais de um nome de produto diferente.
+Essa regra garante a integridade dos dados e previne que produtos diferentes compartilhem o mesmo identificador.
+
+1. Associação Única:
+   - O campo `productId` é utilizado como um identificador único para o nome do produto.
+   - Uma vez que um `productId` é associado a um determinado nome de produto, ele não pode ser reutilizado para um nome de produto diferente.
+   - Exemplo:
+     - Se o `productId` 123 foi associado ao produto "Notebook", você não poderá usar o `productId` 123 para um produto com nome "Celular". Isso resultaria em um erro.
+
+2. Exceção Lançada para Reassociação de `productId`:
+   - Se você tentar cadastrar um produto com um `productId` que já foi associado a outro nome de produto, o sistema lançará uma BusinessException com a mensagem:
+     ```
+     O productId já está associado a outro produto.
+     ```
+
+3. Case Insensitive:
+   - A verificação entre nome de produto e `productId` não faz distinção entre letras maiúsculas e minúsculas.
+   - Por exemplo, se o produto "Notebook" foi associado ao `productId` 123, tanto "NOTEBOOK", "notebook" quanto "Notebook" serão considerados o mesmo produto.
+   - Isso ajuda a garantir que variações na forma de escrever o nome do produto não criem associações duplicadas.
+
+### Resumo:
+
+- O sistema impõe uma relação um-para-um entre `productId` e nome do produto.
+- A tentativa de reutilizar um `productId` para outro nome de produto causará uma exceção.
+- Nomes de produtos são tratados de forma case insensitive, ou seja, não há distinção entre letras maiúsculas e minúsculas.
+
+Essa abordagem garante consistência e evita conflitos nos dados relacionados aos produtos cadastrados no sistema.
