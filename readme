@@ -1,0 +1,35 @@
+# Sistema de Cadastro de Compras
+
+Este é um sistema para gerenciar o cadastro e consulta de compras.
+A API foi desenvolvida utilizando Spring Boot, e inclui funcionalidades como cadastro de itens de compra, consulta de compras e geração de relatórios.
+
+## Tecnologias Utilizadas
+
+- **Java 17**
+- **Spring Boot**
+- **H2 Database** (em memória)
+
+## Funcionalidades
+
+1. **Cadastro de Compras**:
+   - ID do Produto (obrigatório)
+   - Nome do Produto (obrigatório e com no mínimo 3 caracteres)
+   - Quantidade (obrigatório)
+   - CPF do Comprador (com máscara)
+   - Valor unitário do produto (obrigatório)
+   - Data e hora da compra (definido automaticamente como a data/hora da requisição)
+
+2. **Consulta de Compras**:
+   - Filtros: CPF do comprador, nome do produto e intervalo de data e hora.
+
+3. **Geração de Relatórios**:
+   - Relatório agrupado por produto, exibindo o valor total vendido.
+
+## Como Rodar o Projeto
+
+1. **Pré-requisitos**:
+   - JDK 17+
+   - Maven 3.6+
+
+2. **Clonar o Repositório**:
+   git clone https://github.com/victorvalencio/cadastroSicredi
